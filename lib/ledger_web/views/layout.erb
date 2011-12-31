@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>Ledger Web</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <link rel="stylesheet" href="/ledger.css">
+    <script type="text/javascript" src="/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="/bootstrap-dropdown.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $("table.sorted").tablesorter();
+      });      
+    </script>
+  </head>
+  <body>
+    <div class="topbar" data-dropdown="dropdown">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="/">Ledger Web</a>
+          <ul class="nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle">Reports</a>
+              <ul class="dropdown-menu">
+                <li class="divider"></li>
+              </ul>
+            </li>
+          </ul>
+          <form action="/update-date-range" class="pull-right" method="POST">
+            <input class="input-small" type="date" placeholder="From" name="from" value="<%= session[:from] %>">
+            <input class="input-small" type="date" placeholder="To" name="to" value="<%= session[:to] %>">
+            <button class="btn" type="submit">Update</button>
+            <button class="btn" type="submit" name="reset" value="Reset">Reset</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

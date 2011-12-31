@@ -1,0 +1,28 @@
+<% view = {headers: report.headers} %>
+
+<% if report.error %>
+<div class="alert-message block-message warning">
+  <p><%= report.error %></p>
+  <p><%= report.error.backtrace %></p>
+</div>
+<% else %>
+<table class="zebra-striped bordered-table condensed-table sorted">
+  <thead>
+    <tr>
+      <% view[:headers].each do |h| %>
+      <th><span class="<%= h[1] %>"><%= h[0] %></span></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% report.rows do |row| %>
+    <tr>
+      <% report.headers.each do |h| %>
+      <% f = row[h[0]] %>
+      <td><span class="<%= f.span_class %>"><%= f.to_s %></span></td>
+      <% end %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>

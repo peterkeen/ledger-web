@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+
+begin
+  require 'ledger_web'
+rescue LoadError => e
+  path = File.expand_path '../../lib', __FILE__
+  $:.unshift(path) if File.directory?(path) && !$:.include?(path)
+  require 'ledger_web'
+end
+
+LedgerWeb::Watcher.run!
+LedgerWeb::Application.run!(:port => CONFIG.get(:port))
