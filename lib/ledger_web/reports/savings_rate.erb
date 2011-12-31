@@ -1,0 +1,49 @@
+<% @query = query do %>
+  select
+    month as "Month",
+    income as "Income",
+    expenses as "Expenses",
+    rate as "Savings Rate",
+    rate_12 as "Prev Year",
+    rate_24 as "Two Years"
+  from (
+       select
+         month,
+         income,
+         expenses,
+         rate,
+         lead(rate, 12) over() as rate_12,
+         lead(rate, 24) over() as rate_24
+       from (
+         select
+           month,
+           income,
+           expenses,
+           income - expenses as savings, 
+           round((income - expenses) / income * 100, 2) as rate 
+         from (
+           select
+             date_trunc('month', xtn_date)::date as month, 
+             0 - sum(case when account ~ 'Income' then amount else 0 end) as income,
+             sum(case when account ~ 'Expenses' then amount else 0 end) as expenses
+           from 
+             ledger
+           group by 
+             date_trunc('month', xtn_date)::date
+         ) x 
+         order by 
+           month desc
+       ) x
+  ) x
+  where
+      month <= :to
+      and month >= :from
+<% end %>
+<div class="page-header">
+  <h1>Savings Rate</h1>
+</div>
+<div class="row">
+  <div class="span16">
+    <%= table @query %>
+  </div>
+</div>
