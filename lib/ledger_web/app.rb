@@ -23,6 +23,8 @@ module LedgerWeb
         session[:to] = today
       end
       Report.session = session
+
+      @reports = find_all_reports
     end
 
     helpers Sinatra::OutputBuffer::Helpers

@@ -1,7 +1,9 @@
 <% if report.error %>
 <div class="alert-message block-message warning">
   <p><%= report.error %></p>
-  <p><%= report.error.backtrace %></p>
+  <% if report.error.to_s != "No data" %>
+    <p><%= report.error.backtrace %></p>
+  <% end %>
 </div>
 <% else %>
 <table class="zebra-striped bordered-table condensed-table sorted">

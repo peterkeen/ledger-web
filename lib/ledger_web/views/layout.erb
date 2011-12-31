@@ -21,9 +21,12 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle">Reports</a>
               <ul class="dropdown-menu">
-                <li class="divider"></li>
+                <% @reports.each do |report| %>
+                <li><a href="/reports/<%= report[0] %>"><%= report[1] %></a></li>
+                <% end %>
               </ul>
             </li>
+            <li><a href="/help">Help</a></li>
           </ul>
           <form action="/update-date-range" class="pull-right" method="POST">
             <input class="input-small" type="date" placeholder="From" name="from" value="<%= session[:from] %>">

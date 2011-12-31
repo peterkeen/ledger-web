@@ -144,3 +144,27 @@ module LedgerWeb
   end
     
 end
+
+def find_all_reports
+  directories = [
+    File.join(File.dirname(__FILE__), "reports"),
+    File.join(ENV['HOME'], ".ledger_web", "reports")
+  ]
+
+  reports = {}
+
+  directories.each do |dir|
+    if File.directory? dir
+      Dir.glob(File.join(dir, "*.erb")) do |report|
+        basename = File.basename(report).gsub('.erb', '')
+        reports[basename] = 1
+      end
+    end
+  end
+
+  reports.keys.sort.map do |report|
+    name = report.split(/_/).map { |w| w.capitalize }.join(" ")
+    [report, name]
+  end
+
+end
