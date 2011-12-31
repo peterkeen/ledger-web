@@ -1,46 +1,34 @@
 module LedgerWeb
   class Field
-    def initialize(value)
-      @value = value
-    end
 
-    def to_s
-      return @value
-    end
+    attr_reader :title, :value_type, :span_class
 
-    def span_class
-      'pull-left'
+    def initialize(title, value_type, span_class)
+      @title = title
+      @value_type = value_type
+      @span_class = span_class
     end
   end
 
-  class NumericField < Field
-    def to_s
-      return sprintf("%0.2f", @value)
+  class Value
+    def initialize(val)
+      @val = val
     end
 
-    def span_class
-      'pull-right'
+    def to_s
+      @val
     end
   end
 
-  class ReportRow
-    def initialize(row)
-      @row = row
-    end
-
-    def [](field)
-      value = @row[field]
-      if value.instance_of? BigDecimal
-        return NumericField.new(value)
-      else
-        return Field.new(value)
-      end
+  class NumericValue < Value
+    def to_s
+      sprintf("%0.2f", @val)
     end
   end
 
   class Report
 
-    attr_reader :error
+    attr_accessor :error, :fields
 
     def self.session=(session)
       @@session = session
@@ -50,79 +38,109 @@ module LedgerWeb
       @@session
     end
 
-    def self.from_query
-
-
-    def initialize(query, options={})
-      @query = DB.fetch(query, :from => Report.session[:from], :to => Report.session[:to])
-    end
-
-    def headers
-      return @headers if @headers
-
+    def self.from_query(query)
+      ds = DB.fetch(query, :from => Report.session[:from], :to => Report.session[:to])
+      report = self.new
       begin
-        headers = []
-        row = @query.first
+        row = ds.first
         if row.nil?
           raise "No data"
         end
-        @query.columns.each do |col|
+        ds.columns.each do |col|
           value = row[col]
-          if value.instance_of? BigDecimal
-            headers << [col, 'pull-right', 'number']
+          if value.is_a? Numeric
+            report.add_field Field.new(col.to_s, 'number', 'pull-right')
           else
-            headers << [col, 'pull-left', 'string']
+            report.add_field Field.new(col.to_s, 'string', 'pull-left')
           end
         end
-        @headers = headers
-        return headers
+
+        ds.each do |row|
+          vals = []
+          ds.columns.each do |col|
+            vals << row[col]
+          end
+          report.add_row(vals)
+        end
       rescue Exception => e
-        @error = e
-        return []
+        report.error = e
+      end
+
+      return report
+    end
+
+    def initialize
+      @fields = []
+      @rows = []
+    end
+
+    def add_field(field)
+      @fields << field
+    end
+
+    def add_row(row)
+      if row.length != @fields.length
+        raise "row length not equal to fields length"
+      end
+      @rows << row
+    end
+
+    def each_row
+      @rows.each do |row|
+        yield row.zip(@fields)
       end
     end
 
-    def axis(col)
-      return @axis[col] if @axis
+    def pivot(column, sort_order)
+      new_report = self.class.new
 
-      row = @query.first
-      axis = {}
-
-      columns = @query.columns[1,@query.columns.length]
-      groups = {}
-      columns.each do |col|
-        if ! row[col].instance_of? BigDecimal
-          return 0
-        end
-        oom = Math.log10(row[col].to_f.abs)
-        groups[oom] ||= []
-        groups[oom] << col
-      end
-
-      keys = groups.keys.sort.reverse
-      partition_point = (keys.length / 2.0).floor
-
-      keys.each_with_index do |key,i|
-        groups[key].each_with_index do |c|
-          if i <= partition_point
-            axis[c] = 0
-          else
-            axis[c] = 1
-          end
+      bucket_column_index = 0
+      self.fields.each_with_index do |f, i|
+        if f.title == column
+          bucket_column_index = i
+          break
+        else
+          new_report.add_field(f)
         end
       end
-      @axis = axis
-      return axis[col]
-    end
 
-    def rows
-      if @error
-        return
+      buckets = {}
+      new_rows = {}
+
+      self.each_row do |row|
+        key = row[0, bucket_column_index].map { |r| r[0] }
+        bucket_name = row[bucket_column_index][0]
+        bucket_value = row[bucket_column_index + 1][0]
+
+        if not buckets.has_key? bucket_name
+          field = bucket_value.is_a?(Numeric) ? Field.new(bucket_name, 'number', 'pull-right') : Field.new(bucket_name, 'string', 'pull-left')
+          buckets[bucket_name] = field
+        end
+
+        new_rows[key] ||= {}
+        new_rows[key][bucket_name] = bucket_value
       end
 
-      @query.each do |row|
-        yield ReportRow.new(row)
+      bucket_keys = buckets.keys.sort
+      if sort_order && sort_order == 'desc'
+        bucket_keys = bucket_keys.reverse
       end
+
+      bucket_keys.each do |bucket|
+        new_report.add_field(buckets[bucket])
+      end
+
+      new_rows.each do |key, value|
+        row = key
+        bucket_keys.each do |b|
+          row << value[b]
+        end
+
+        new_report.add_row(row)
+      end
+
+      return new_report
     end
   end
+    
 end

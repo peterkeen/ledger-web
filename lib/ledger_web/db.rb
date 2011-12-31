@@ -35,8 +35,6 @@ def load_database
 
       row[:xtn_month] = xtn_date.strftime('%Y/%m/01')
       row[:xtn_year]  = xtn_date.strftime('%Y/01/01')
-      row[:virtual] = row[:virtual] == 'true' ? true : false
-      row[:cleared] = row[:cleared] == 'true' ? true : false
 
       row = CONFIG.run_hooks(:before_insert_row, row)
 

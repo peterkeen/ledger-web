@@ -36,9 +36,13 @@ module LedgerWeb
         partial(:table, :report => report)
       end
 
-      def query(options, &block)
+      def query(options={}, &block)
         q = erb_with_output_buffer block
-        return LedgerWeb::Report.new(q, options)
+        report = LedgerWeb::Report.from_query(q)
+        if options[:pivot]
+          report = report.pivot(options[:pivot], options[:pivot_sort_order])
+        end
+        return report
       end
 
       def erb_with_output_buffer(buf = '', block)
