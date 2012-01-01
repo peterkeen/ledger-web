@@ -7,3 +7,4 @@ env.sh
 .DS_Store
 \#*
 .\#*
+*.gem
