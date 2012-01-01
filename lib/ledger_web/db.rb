@@ -2,7 +2,7 @@ require 'sequel'
 require 'sequel/extensions/migration'
 require 'csv'
 
-DB = Sequel.connect(CONFIG.get :database_url)
+DB = Sequel.connect(CONFIG.get(:database_url))
 
 Sequel::Migrator.apply(DB, File.join(File.dirname(__FILE__), "db/migrate"))
 
@@ -10,7 +10,6 @@ home_migrations = File.join(ENV['HOME'], '.ledger_web', 'migrate')
 if File.directory?(home_migrations)
   Sequel::Migrator.run(DB, home_migrations, :table => "user_schema_changes")
 end
-
 
 def load_database
   ledger_format = CONFIG.get :ledger_format

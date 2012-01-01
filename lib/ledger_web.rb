@@ -5,6 +5,7 @@ require 'ledger_web/config'
 require 'ledger_web/db'
 require 'ledger_web/report'
 require 'ledger_web/watcher'
+require 'ledger_web/helpers'
 require 'ledger_web/app'
 
 
