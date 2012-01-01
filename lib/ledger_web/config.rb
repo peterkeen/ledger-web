@@ -30,10 +30,12 @@ module LedgerWeb
     end
 
     def run_hooks(phase, data)
-      @hooks[phase].each do |hook|
-        hook.call(data)
+      if @hooks.has_key? phase
+        @hooks[phase].each do |hook|
+          hook.call(data)
+        end
+        return data
       end
-      return data
     end
 
     def override_with(config)
@@ -65,6 +67,9 @@ CONFIG = LedgerWeb::Config.new do |config|
   config.set :session_expire,     60*60
   config.set :watch_interval,     5
   config.set :watch_stable_count, 3
+  config.set :ledger_bin_path,    "ledger"
+
+  config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note)))\n"
   
   ledger_web_dir = "#{ENV['HOME']}/.ledger_web"
 

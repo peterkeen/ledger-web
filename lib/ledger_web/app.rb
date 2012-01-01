@@ -23,6 +23,7 @@ module LedgerWeb
         session[:to] = today
       end
       Report.session = session
+      Report.params = params
 
       @reports = find_all_reports
     end
@@ -35,7 +36,8 @@ module LedgerWeb
       end
 
       def table(report, options = {})
-        partial(:table, :report => report)
+        links = options[:links] || {}
+        partial(:table, :report => report, :links => links)
       end
 
       def query(options={}, &block)
@@ -53,6 +55,38 @@ module LedgerWeb
         @_out_buf
       ensure
         @_out_buf = old_buffer
+      end
+
+      def expect(expected)
+        not_present = []
+        expected.each do |key|
+          if not params.has_key? key
+            not_present << key
+          end
+        end
+
+        if not_present.length > 0
+          raise "Missing params: #{not_present.join(', ')}"
+        end
+      end
+
+      def linkify(links, row, value, display_value)
+        links.each do |key, val|
+          if key.is_a? String
+            key = /^#{key}$/
+          end
+
+          if key.match(value[1].title.to_s)
+            url = String.new(links[key])
+            row.each_with_index do |v,i|
+              url.gsub!(":#{i}", v[0].to_s)
+            end
+
+            url.gsub!(':title', value[1].title.to_s)
+            display_value = "<a href='#{url}'>#{display_value}</a>"
+          end
+        end
+        display_value
       end
 
     end

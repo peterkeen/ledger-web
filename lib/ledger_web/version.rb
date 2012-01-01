@@ -1,4 +1,3 @@
 module LedgerWeb
-  class Query
-  end
+  VERSION = 1.0
 end

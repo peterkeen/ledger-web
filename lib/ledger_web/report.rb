@@ -38,8 +38,25 @@ module LedgerWeb
       @@session
     end
 
+    def self.params=(params)
+      @@params = params
+    end
+
+    def self.params
+      @@params
+    end
+
     def self.from_query(query)
-      ds = DB.fetch(query, :from => Report.session[:from], :to => Report.session[:to])
+      params = {
+        :from => Report.session[:from],
+        :to => Report.session[:to]
+      }
+
+      @@params.each do |key, val|
+        params[key.to_sym] = val
+      end
+
+      ds = DB.fetch(query, params)
       report = self.new
       begin
         row = ds.first
@@ -142,7 +159,7 @@ module LedgerWeb
       return new_report
     end
   end
-    
+
 end
 
 def find_all_reports

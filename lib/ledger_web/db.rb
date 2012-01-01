@@ -13,15 +13,20 @@ end
 
 
 def load_database
-  format = "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note)))\n"
+  ledger_format = CONFIG.get :ledger_format
+  ledger_bin_path = CONFIG.get :ledger_bin_path
+  ledger_file = CONFIG.get :ledger_file
 
   # dump ledger to tempfile
   print "    dumping ledger to file...."
   file = Tempfile.new('ledger')
-  system "ledger --format='#{format}' reg > #{file.path}"
+  system "#{ledger_bin_path} -f #{ledger_file} --format='#{ledger_format}' reg > #{file.path}"
   puts "done"
   counter = 0
   DB.transaction do
+
+    CONFIG.run_hooks(:before_load, DB)
+
     print "    clearing ledger table...."
     DB["DELETE FROM ledger"].delete
     puts "done"
@@ -37,9 +42,11 @@ def load_database
       row[:xtn_year]  = xtn_date.strftime('%Y/01/01')
 
       row = CONFIG.run_hooks(:before_insert_row, row)
-
       DB[:ledger].insert(row)
+      CONFIG.run_hooks(:after_insert_row, row)
     end
+
+    CONFIG.run_hooks(:after_load, DB)
   end
   print "    analyzing ledger table"
   DB.fetch('VACUUM ANALYZE ledger')
