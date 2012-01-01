@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'optparse'
 
 begin
   require 'ledger_web'
@@ -9,6 +10,22 @@ rescue LoadError => e
   $:.unshift(path) if File.directory?(path) && !$:.include?(path)
   require 'ledger_web'
 end
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: ledger_web [options]"
+
+  opts.on("-p", "--port PORT", Integer, "Port to expose the web interface") do |p|
+    CONFIG.set :port, p.to_i
+  end
+
+  opts.on("-f", "--ledger-file FILE", String, "Ledger file to watch and load") do |f|
+    CONFIG.set :ledger_file, f
+  end
+
+  opts.on("-d", "--database-url URL", String, "Database URL to load into") do |d|
+    CONFIG.set :database_url, d
+  end
+end.parse!
 
 LedgerWeb::Watcher.run!
 LedgerWeb::Application.run!(:port => CONFIG.get(:port))
