@@ -22,8 +22,8 @@ module LedgerWeb
       if not session?
         session_start!
         today = Date.today
-        session[:from] = Date.new(today.year - 1, today.month, today.day)
-        session[:to] = today
+        session[:from] = Date.new(today.year - 1, today.month, today.day).strftime("%Y/%m/%d")
+        session[:to] = today.strftime("%Y/%m/%d")
       end
       Report.session = session
       Report.params = params
