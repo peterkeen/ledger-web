@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency("directory_watcher")
   s.add_dependency("sinatra")
   s.add_dependency("sinatra-session")
+  s.add_dependency("sinatra-contrib")
 
   s.files         = `git ls-files`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }

@@ -1,5 +1,6 @@
 module LedgerWeb
   module Helpers
+
     def partial (template, locals = {})
       erb(template, :layout => false, :locals => locals)
     end
@@ -10,20 +11,12 @@ module LedgerWeb
     end
   
     def query(options={}, &block)
-      q = erb_with_output_buffer block
+      q = capture(&block)
       report = LedgerWeb::Report.from_query(q)
       if options[:pivot]
         report = report.pivot(options[:pivot], options[:pivot_sort_order])
       end
       return report
-    end
-  
-    def erb_with_output_buffer(buf = '', block)
-      @_out_buf, old_buffer = buf, @_out_buf
-      block.call
-      @_out_buf
-    ensure
-      @_out_buf = old_buffer
     end
   
     def expect(expected)
@@ -56,6 +49,13 @@ module LedgerWeb
         end
       end
       display_value
+    end
+
+    def visualization(report, options={}, &block)
+      vis = capture(&block)
+      @vis_count ||= 0
+      @vis_count += 1
+      @_out_buf.concat(partial(:visualization, :report => report, :visualization_code => vis, :div_id => "vis_#{@vis_count}"))
     end
   end
 end

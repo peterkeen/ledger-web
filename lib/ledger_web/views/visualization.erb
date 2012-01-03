@@ -1,0 +1,18 @@
+<script type="text/javascript">
+  $(function () {
+    var data = [
+    <% report.each_row do |row| %>
+    [
+      <% row.each do |val| %>
+      <%= (val[1].value_type == 'number' && ! val[0].nil?) ? sprintf("%0.2f", val[0]) : sprintf('"%s"', val[0]) %>,
+      <% end %>
+    ],
+    <% end %>
+    ];
+
+    var container = d3.select("#<%= div_id %>");
+
+    <%= visualization_code %>
+  });
+</script>
+<div class="visualization" id="<%= div_id %>"></div>

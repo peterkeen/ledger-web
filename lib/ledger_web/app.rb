@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra/base'
+require 'sinatra/contrib'
 require 'sinatra/session'
 
 module LedgerWeb
@@ -10,6 +11,7 @@ module LedgerWeb
     set :views, CONFIG.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
     set :reload_templates, true
 
+    helpers Sinatra::Capture
     helpers LedgerWeb::Helpers
 
     def find_template(views, name, engine, &block)
