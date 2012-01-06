@@ -1,6 +1,7 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
+require 'ledger_web/price_lookup'
 require 'ledger_web/config'
 require 'ledger_web/db'
 require 'ledger_web/report'

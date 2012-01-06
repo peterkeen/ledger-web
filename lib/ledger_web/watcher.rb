@@ -19,7 +19,7 @@ module LedgerWeb
         args.each do |event|
           if event[0] == :stable
             puts "Loading database"
-            count = load_database
+            count = LedgerWeb::Database.load_database
             puts "Loaded #{count} records"
           end
         end

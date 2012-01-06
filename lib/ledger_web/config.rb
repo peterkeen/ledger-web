@@ -69,8 +69,15 @@ CONFIG = LedgerWeb::Config.new do |config|
   config.set :watch_stable_count, 3
   config.set :ledger_bin_path,    "ledger"
 
-  config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note)))\n"
-  
+  config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note))),%(quoted(cost))\n"
+
+  config.set :price_lookup_skip_symbols, ['$']
+
+  func = Proc.new do |symbol, min_date, max_date|
+    LedgerWeb::YahooPriceLookup.new(symbol, min_date, max_date).lookup
+  end
+  config.set :price_function, func
+
   ledger_web_dir = "#{ENV['HOME']}/.ledger_web"
 
   if File.directory? ledger_web_dir
