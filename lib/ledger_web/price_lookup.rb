@@ -12,14 +12,14 @@ module LedgerWeb
 
     def lookup
       params = {
-        a: @min_date.month - 1,
-        b: @min_date.day,
-        c: @min_date.year,
-        d: @max_date.month - 1,
-        e: @max_date.day,
-        f: @max_date.year,
-        s: @symbol,
-        ignore: '.csv',
+        'a' => @min_date.month - 1,
+        'b' => @min_date.day,
+        'c' => @min_date.year,
+        'd' => @max_date.month - 1,
+        'e' => @max_date.day,
+        'f' => @max_date.year,
+        's' => @symbol,
+        'ignore' => '.csv',
       }
 
       query = params.map { |k,v| "#{k}=#{v}" }.join("&")
