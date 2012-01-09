@@ -34,8 +34,8 @@ module LedgerWeb
         @hooks[phase].each do |hook|
           hook.call(data)
         end
-        return data
       end
+      return data
     end
 
     def override_with(config)
