@@ -55,7 +55,14 @@ module LedgerWeb
       vis = capture(&block)
       @vis_count ||= 0
       @vis_count += 1
-      @_out_buf.concat(partial(:visualization, :report => report, :visualization_code => vis, :div_id => "vis_#{@vis_count}"))
+      @_out_buf.concat(
+        partial(
+          :visualization,
+          :report => report,
+          :visualization_code => vis, 
+          :div_id => "vis_#{@vis_count}"
+        )
+      )
     end
   end
 end
