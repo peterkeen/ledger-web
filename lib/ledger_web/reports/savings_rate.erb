@@ -20,7 +20,7 @@
            income,
            expenses,
            income - expenses as savings, 
-           round((income - expenses) / income * 100, 2) as rate 
+           round(case when income = 0 then 'NaN' else (income - expenses) / income * 100 end, 2) as rate
          from (
            select
              date_trunc('month', xtn_date)::date as month, 
