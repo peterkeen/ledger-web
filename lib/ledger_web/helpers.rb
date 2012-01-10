@@ -1,5 +1,5 @@
 require 'rack/utils'
-require 'uri'
+require 'cgi'
 
 module LedgerWeb
   module Helpers
@@ -46,10 +46,10 @@ module LedgerWeb
         if key.match(value[1].title.to_s)
           url = String.new(links[key])
           row.each_with_index do |v,i|
-            url.gsub!(":#{i}", URI.escape(v[0].to_s))
+            url.gsub!(":#{i}", CGI.escape(v[0].to_s))
           end
   
-          url.gsub!(':title', URI.escape(value[1].title.to_s))
+          url.gsub!(':title', CGI.escape(value[1].title.to_s))
           display_value = "<a href='#{url}'>#{escape_html(display_value)}</a>"
         else
           display_value = escape_html(display_value)
