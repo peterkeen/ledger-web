@@ -50,6 +50,7 @@ module LedgerWeb
           end
   
           url.gsub!(':title', CGI.escape(value[1].title.to_s))
+          url.gsub!(':now', CGI.escape(DateTime.now.strftime('%Y-%m-%d')))
           display_value = "<a href='#{url}'>#{escape_html(display_value)}</a>"
         else
           display_value = escape_html(display_value)
