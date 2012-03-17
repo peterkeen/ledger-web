@@ -5,7 +5,7 @@ require 'ledger_web/version'
 Gem::Specification.new do |s|
   s.name        = "ledger_web"
   s.version     = LedgerWeb::VERSION
-  s.date        = "2011-12-31"
+  s.date        = `date +%Y-%m-%d`
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Pete Keen"]
   s.email       = ["pete@bugsplat.info"]
