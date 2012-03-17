@@ -16,10 +16,12 @@ Gem::Specification.new do |s|
   s.add_dependency("pg")
   s.add_dependency("sequel")
   s.add_dependency("directory_watcher")
+  s.add_dependency("rack", ">= 1.3.6")
   s.add_dependency("sinatra")
   s.add_dependency("sinatra-session")
   s.add_dependency("sinatra-contrib")
 
+  s.bindir        = 'bin'
   s.files         = `git ls-files`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
