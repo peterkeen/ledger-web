@@ -6,9 +6,9 @@ require 'sinatra/session'
 module LedgerWeb
   class Application < Sinatra::Base
     register Sinatra::Session
-    set :session_secret, CONFIG.get(:session_secret)
-    set :session_expire, CONFIG.get(:session_expire)
-    set :views, CONFIG.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
+    set :session_secret, LedgerWeb::Config.instance.get(:session_secret)
+    set :session_expire, LedgerWeb::Config.instance.get(:session_expire)
+    set :views, LedgerWeb::Config.instance.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
     set :reload_templates, true
 
     helpers Sinatra::Capture
@@ -55,7 +55,7 @@ module LedgerWeb
     end
 
     get '/' do
-      index_report = CONFIG.get :index_report
+      index_report = LedgerWeb::Config.instance.get :index_report
       if index_report
         redirect "/reports/#{index_report.to_s}"
       else

@@ -20,9 +20,12 @@ Gem::Specification.new do |s|
   s.add_dependency("sinatra")
   s.add_dependency("sinatra-session")
   s.add_dependency("sinatra-contrib")
+  s.add_dependency("rspec")
+  s.add_dependency("database_cleaner")
 
   s.bindir        = 'bin'
   s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- test/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 end

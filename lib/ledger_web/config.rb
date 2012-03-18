@@ -3,6 +3,17 @@ module LedgerWeb
   class Config
     attr_reader :vars, :hooks
 
+    @@should_load_user_config = true
+    @@instance = nil
+
+    def self.should_load_user_config
+      @@should_load_user_config
+    end
+
+    def self.should_load_user_config=(val)
+      @@should_load_user_config = val
+    end
+
     def initialize
       @vars = {}
       @hooks = {}
@@ -55,40 +66,43 @@ module LedgerWeb
         return eval(file.read, nil, filename)
       end
     end
-  end
-end
 
-CONFIG = LedgerWeb::Config.new do |config|
-  config.set :database_url,       "postgres://localhost/ledger"
-  config.set :port,               "9090"
-  config.set :ledger_file,        ENV['LEDGER_FILE']
-  config.set :report_directories, ["#{File.dirname(__FILE__)}/reports"]
-  config.set :session_secret,     'SomethingSecretThisWayPassed'
-  config.set :session_expire,     60*60
-  config.set :watch_interval,     5
-  config.set :watch_stable_count, 3
-  config.set :ledger_bin_path,    "ledger"
 
-  config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note))),%(quoted(cost))\n"
-
-  config.set :price_lookup_skip_symbols, ['$']
-
-  func = Proc.new do |symbol, min_date, max_date|
-    LedgerWeb::YahooPriceLookup.new(symbol, min_date, max_date).lookup
-  end
-  config.set :price_function, func
-
-  ledger_web_dir = "#{ENV['HOME']}/.ledger_web"
-
-  if File.directory? ledger_web_dir
-    if File.directory? "#{ledger_web_dir}/reports"
-      dirs = config.get(:report_directories)
-      dirs.unshift "#{ledger_web_dir}/reports"
-      config.set :report_directories, dirs
-    end
-    
-    if File.exists? "#{ledger_web_dir}/config.rb"
-      config.override_with(LedgerWeb::Config.from_file("#{ledger_web_dir}/config.rb"))
+    def self.instance
+      @@instance ||= LedgerWeb::Config.new do |config|
+        config.set :database_url,       "postgres://localhost/ledger"
+        config.set :port,               "9090"
+        config.set :ledger_file,        ENV['LEDGER_FILE']
+        config.set :report_directories, ["#{File.dirname(__FILE__)}/reports"]
+        config.set :session_secret,     'SomethingSecretThisWayPassed'
+        config.set :session_expire,     60*60
+        config.set :watch_interval,     5
+        config.set :watch_stable_count, 3
+        config.set :ledger_bin_path,    "ledger"
+      
+        config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note))),%(quoted(cost))\n"
+      
+        config.set :price_lookup_skip_symbols, ['$']
+      
+        func = Proc.new do |symbol, min_date, max_date|
+          LedgerWeb::YahooPriceLookup.new(symbol, min_date, max_date).lookup
+        end
+        config.set :price_function, func
+      
+        ledger_web_dir = "#{ENV['HOME']}/.ledger_web"
+      
+        if LedgerWeb::Config.should_load_user_config && File.directory?(ledger_web_dir)
+          if File.directory? "#{ledger_web_dir}/reports"
+            dirs = config.get(:report_directories)
+            dirs.unshift "#{ledger_web_dir}/reports"
+            config.set :report_directories, dirs
+          end
+          
+          if File.exists? "#{ledger_web_dir}/config.rb"
+            config.override_with(LedgerWeb::Config.from_file("#{ledger_web_dir}/config.rb"))
+          end
+        end
+      end
     end
   end
 end

@@ -3,23 +3,25 @@ require 'directory_watcher'
 module LedgerWeb
   class Watcher
     def self.run!
-      directory = CONFIG.get :watch_directory
+      directory = LedgerWeb::Config.instance.get :watch_directory
       glob = "*"
 
       if directory.nil?
-        directory = File.dirname(CONFIG.get :ledger_file)
-        glob = File.basename(CONFIG.get :ledger_file)
+        directory = File.dirname(LedgerWeb::Config.instance.get :ledger_file)
+        glob = File.basename(LedgerWeb::Config.instance.get :ledger_file)
       end
 
       @@dw = DirectoryWatcher.new directory, :glob => glob
-      @@dw.interval = CONFIG.get :watch_interval
-      @@dw.stable = CONFIG.get :watch_stable_count
+      @@dw.interval = LedgerWeb::Config.instance.get :watch_interval
+      @@dw.stable = LedgerWeb::Config.instance.get :watch_stable_count
 
       @@dw.add_observer do |*args|
         args.each do |event|
           if event[0] == :stable
             puts "Loading database"
-            count = LedgerWeb::Database.load_database
+            LedgerWeb::Database.run_migrations
+            file = LedgerWeb::Database.dump_ledger_to_csv
+            count = LedgerWeb::Database.load_database(file)
             puts "Loaded #{count} records"
           end
         end

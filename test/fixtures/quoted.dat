@@ -1,0 +1,8 @@
+2012/01/01 * Transaction One
+    Assets:Savings               100.00 "Foo 123"
+    Assets:Checking              200.00 "Foo 123"
+    Equity:Opening Balances
+
+2012/01/02 * Lunch
+    Expenses:Lunch                10.00 "Foo 123"
+    Assets:Checking

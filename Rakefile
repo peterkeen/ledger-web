@@ -9,3 +9,7 @@ end
 task :release => :build do
   system "gem push ledger_web-#{LedgerWeb::VERSION}.gem"
 end
+
+task :test do
+  system 'rspec --color --format=documentation test'
+end

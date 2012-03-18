@@ -1,0 +1,8 @@
+2012/01/01 * Transaction One
+    Assets:Savings               $100.00
+    Assets:Checking              $200.00
+    Equity:Opening Balances
+
+2012/01/02 * Lunch
+    Expenses:Lunch                $10.00
+    Assets:Checking

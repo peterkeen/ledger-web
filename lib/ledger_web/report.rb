@@ -8,6 +8,12 @@ module LedgerWeb
       @value_type = value_type
       @span_class = span_class
     end
+
+    def ==(other)
+      self.title == other.title && \
+      self.value_type == other.value_type && \
+      self.span_class == other.span_class
+    end
   end
 
   class Value
@@ -28,7 +34,10 @@ module LedgerWeb
 
   class Report
 
-    attr_accessor :error, :fields
+    attr_accessor :error, :fields, :rows
+
+    @@session = {}
+    @@params = {}
 
     def self.session=(session)
       @@session = session
@@ -56,7 +65,7 @@ module LedgerWeb
         params[key.to_sym] = val
       end
 
-      ds = DB.fetch(query, params)
+      ds = LedgerWeb::Database.handle.fetch(query, params)
       report = self.new
       begin
         row = ds.first
