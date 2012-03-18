@@ -11,6 +11,8 @@ module LedgerWeb
     set :views, LedgerWeb::Config.instance.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
     set :reload_templates, true
 
+    LedgerWeb::Database.connect
+
     helpers Sinatra::Capture
     helpers LedgerWeb::Helpers
 
