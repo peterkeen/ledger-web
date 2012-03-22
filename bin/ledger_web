@@ -27,5 +27,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+LedgerWeb::Database.connect
+
 LedgerWeb::Watcher.run!
 LedgerWeb::Application.run!(:port => LedgerWeb::Config.instance.get(:port))

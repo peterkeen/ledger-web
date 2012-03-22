@@ -19,7 +19,6 @@ module LedgerWeb
         args.each do |event|
           if event[0] == :stable
             puts "Loading database"
-            LedgerWeb::Database.connect
             LedgerWeb::Database.run_migrations
             file = LedgerWeb::Database.dump_ledger_to_csv
             count = LedgerWeb::Database.load_database(file)
