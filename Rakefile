@@ -13,3 +13,7 @@ end
 task :test do
   system 'rspec --color --format=documentation test'
 end
+
+task :install => :build do
+  system "gem install ledger_web-#{LedgerWeb::VERSION}.gem"
+end
