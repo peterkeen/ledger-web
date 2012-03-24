@@ -4,6 +4,7 @@ require 'rspec'
 require 'ledger_web/config'
 require 'ledger_web/db'
 require 'ledger_web/report'
+require 'ledger_web/helpers'
 require 'database_cleaner'
 
 RSpec.configure do |config|
@@ -70,4 +71,8 @@ end
 
 def number_field(name)
   field(name, 'number', 'pull-right')
+end
+
+class TestHelper
+  include LedgerWeb::Helpers
 end

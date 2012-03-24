@@ -1,8 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
 require 'ledger_web/report'
+require 'ledger_web/helpers'
 
 describe LedgerWeb::Report do
   describe "#from_query" do
+    let(:helpers) { TestHelper.new }
     it "should run the query" do
 
       LedgerWeb::Report.session = {:from => '2012/01/01', :to => '2012/01/01'}
@@ -18,6 +20,20 @@ describe LedgerWeb::Report do
       rows[0][0][0].should eq(5)
       rows[0][0][1].should eq(LedgerWeb::Field.new('foo', 'number', 'pull-right'))
     end
+
+    it "should respect defaults" do
+      LedgerWeb::Report.params = {}
+      helpers.default('foo', 'bar')
+
+      report = LedgerWeb::Report.from_query("select :foo as foo")
+      rows = []
+      report.each_row do |row|
+        rows << row
+      end
+
+      rows[0][0][0].should eq("bar")
+    end
+
   end
 
   describe "#pivot" do

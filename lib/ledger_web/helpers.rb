@@ -36,6 +36,13 @@ module LedgerWeb
         raise "Missing params: #{not_present.join(', ')}"
       end
     end
+
+    def default(key, value)
+      if not Report.params.has_key? key
+        puts "Setting #{key} to #{value}"
+        Report.params[key] = value
+      end
+    end
   
     def linkify(links, row, value, display_value)
       links.each do |key, val|
