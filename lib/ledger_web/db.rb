@@ -50,11 +50,11 @@ module LedgerWeb
     
         LedgerWeb::Config.instance.run_hooks(:before_load, @@db)
 
-        puts "    clearing ledger table...."
+        puts "Clearing ledger table...."
         @@db["DELETE FROM ledger"].delete
-        puts "    done"
+        puts "Done clearing ledger table"
     
-        puts "    loading into database...."
+        puts "Loading into database...."
 
         CSV.foreach(file.path) do |row|
           counter += 1
@@ -75,20 +75,30 @@ module LedgerWeb
     
           row[:xtn_month] = xtn_date.strftime('%Y/%m/01')
           row[:xtn_year]  = xtn_date.strftime('%Y/01/01')
-          row[:cost] = row[:cost].gsub(/[^\d\.-]/, '')
+          row[:cost] = parse_cost(row[:cost])
     
           row = LedgerWeb::Config.instance.run_hooks(:before_insert_row, row)
           @@db[:ledger].insert(row)
           LedgerWeb::Config.instance.run_hooks(:after_insert_row, row)
         end
     
-        puts "    Running after_load hooks"
+        puts "Running after_load hooks"
         LedgerWeb::Config.instance.run_hooks(:after_load, @@db)
       end
-      puts "    analyzing ledger table"
+      puts "Analyzing ledger table"
       @@db.fetch('VACUUM ANALYZE ledger').all
-      puts "done"
+      puts "Done!"
       counter
+    end
+
+    def self.parse_cost(cost)
+      match = cost.match(/([\d\.-]+) (.+) {(.+)} \[(.+)\]/)
+      if match
+        amount = match[1].to_f
+        price = match[3].gsub(/[^\d\.-]/, '').to_f
+        return price * amount
+      end
+      cost.gsub(/[^\d\.-]/, '')
     end
     
     def self.load_prices
@@ -120,7 +130,7 @@ HERE
       proc = LedgerWeb::Config.instance.get :price_function
       skip = LedgerWeb::Config.instance.get :price_lookup_skip_symbols
     
-      puts "    Loading prices"
+      puts "Loading prices"
       rows.each do |row|
         if skip.include?(row[:commodity])
           next
@@ -132,7 +142,7 @@ HERE
         end
       end
       @@db.fetch("analyze prices").all
-      puts "    Done loading prices"
+      puts "Done loading prices"
     end
   end
 end

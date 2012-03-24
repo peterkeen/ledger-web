@@ -218,5 +218,31 @@ describe LedgerWeb::Database do
       ])
 
     end
+
+    it "should load the database from csv with a complicated cost string" do
+      count = 0
+      File.open(fixture('complex_costs')) do |file|
+        count = LedgerWeb::Database.load_database(file)
+      end
+      count.should eq(1)
+
+      convert_bd_to_string(LedgerWeb::Database.handle[:ledger].all()).should eq([
+        {
+          :xtn_date => Date.new(2011,8,30),
+          :checknum => nil,
+          :note => 'Tttttttttt Pagamento',
+          :account => 'Liabilities:Funds:Retirement Plan',
+          :commodity => '"B PGBL F10"',
+          :amount => "103.59",
+          :tags => '',
+          :xtn_month => Date.new(2011,8,1),
+          :xtn_year => Date.new(2011,1,1),
+          :virtual => true,
+          :xtn_id => 7288,
+          :cleared => false,
+          :cost => "442.33"
+        },                                                                                 
+      ])
+    end
   end
 end
