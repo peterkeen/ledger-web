@@ -15,6 +15,8 @@ module LedgerWeb
       @@dw.interval = LedgerWeb::Config.instance.get :watch_interval
       @@dw.stable = LedgerWeb::Config.instance.get :watch_stable_count
 
+      LedgerWeb::Database.connect
+
       @@dw.add_observer do |*args|
         args.each do |event|
           if event[0] == :stable

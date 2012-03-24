@@ -3,6 +3,8 @@
 require 'rubygems'
 require 'optparse'
 
+STDOUT.sync = true
+
 begin
   require 'ledger_web'
 rescue LoadError => e

@@ -32,15 +32,15 @@ module LedgerWeb
       ledger_bin_path = LedgerWeb::Config.instance.get :ledger_bin_path
       ledger_file = LedgerWeb::Config.instance.get :ledger_file
       ledger_format = LedgerWeb::Config.instance.get :ledger_format
-      
-      print "    dumping ledger to file...."
+
+      puts "Dumping ledger to file..."
       file = Tempfile.new('ledger')
       system "#{ledger_bin_path} -f #{ledger_file} --format='#{ledger_format}' reg > #{file.path}"
       replaced_file = Tempfile.new('ledger')
       replaced_file.write(file.read.gsub('\"', '""'))
       replaced_file.flush
 
-      puts "done"
+      puts "Dump finished"
       return replaced_file
     end
       
@@ -49,12 +49,12 @@ module LedgerWeb
       @@db.transaction do
     
         LedgerWeb::Config.instance.run_hooks(:before_load, @@db)
-    
-        print "    clearing ledger table...."
+
+        puts "    clearing ledger table...."
         @@db["DELETE FROM ledger"].delete
-        puts "done"
+        puts "    done"
     
-        print "    loading into database...."
+        puts "    loading into database...."
 
         CSV.foreach(file.path) do |row|
           counter += 1
@@ -113,14 +113,14 @@ module LedgerWeb
         ) x
 HERE
     
-      puts "Deleting prices"
+      puts "    Deleting prices"
       @@db["DELETE FROM prices"].delete
     
       rows = @@db.fetch(query)
       proc = LedgerWeb::Config.instance.get :price_function
       skip = LedgerWeb::Config.instance.get :price_lookup_skip_symbols
     
-      puts "Loading prices"
+      puts "    Loading prices"
       rows.each do |row|
         if skip.include?(row[:commodity])
           next
@@ -132,7 +132,7 @@ HERE
         end
       end
       @@db.fetch("analyze prices").all
-      puts "Done loading prices"
+      puts "    Done loading prices"
     end
   end
 end
