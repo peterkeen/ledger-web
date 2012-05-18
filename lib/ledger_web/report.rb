@@ -174,7 +174,7 @@ end
 def find_all_reports
   directories = [
     File.join(File.dirname(__FILE__), "reports"),
-    LedgerWeb::Config.instance.get :user_report_dir
+    LedgerWeb::Config.instance.get(:user_report_dir)
   ]
 
   reports = {}
