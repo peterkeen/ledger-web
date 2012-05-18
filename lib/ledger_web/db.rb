@@ -22,9 +22,9 @@ module LedgerWeb
     def self.run_migrations
       Sequel::Migrator.apply(@@db, File.join(File.dirname(__FILE__), "db/migrate"))
 
-      home_migrations = File.join(ENV['HOME'], '.ledger_web', 'migrate')
-      if LedgerWeb::Config.should_load_user_config && File.directory?(home_migrations)
-        Sequel::Migrator.run(@@db, home_migrations, :table => "user_schema_changes")
+      user_migrations = LedgerWeb::Config.instance.get :user_migrate_directory
+      if not user_migrations.nil?
+        Sequel::Migrator.run(@@db, user_migrations, :table => "user_schema_changes")
       end
     end
 
