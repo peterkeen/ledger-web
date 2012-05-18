@@ -13,6 +13,8 @@ rescue LoadError => e
   require 'ledger_web'
 end
 
+user_dir = "#{ENV['HOME']}/.ledger_web"
+
 OptionParser.new do |opts|
   opts.banner = "Usage: ledger_web [options]"
 
@@ -27,7 +29,13 @@ OptionParser.new do |opts|
   opts.on("-d", "--database-url URL", String, "Database URL to load into") do |d|
     LedgerWeb::Config.instance.set :database_url, d
   end
+
+  opts.on("-U", "--user-dir DIR", String, "Directory containing reports and config") do |d|
+    user_dir = d
+  end
 end.parse!
+
+LedgerWeb::Config.instance.load_user_config(user_dir)
 
 LedgerWeb::Database.connect
 

@@ -61,12 +61,25 @@ module LedgerWeb
       end
     end
 
+    def load_user_config(user_dir)
+      if LedgerWeb::Config.should_load_user_config && File.directory?(user_dir)
+        if File.directory? "#{user_dir}/reports"
+          dirs = self.get(:report_directories)
+          dirs.unshift "#{user_dir}/reports"
+          self.set :report_directories, dirs
+        end
+
+        if File.exists? "#{user_dir}/config.rb"
+          self.override_with(LedgerWeb::Config.from_file("#{user_dir}/config.rb"))
+        end
+      end
+    end
+
     def self.from_file(filename)
       File.open(filename) do |file|
         return eval(file.read, nil, filename)
       end
     end
-
 
     def self.instance
       @@instance ||= LedgerWeb::Config.new do |config|
@@ -79,29 +92,16 @@ module LedgerWeb
         config.set :watch_interval,     5
         config.set :watch_stable_count, 3
         config.set :ledger_bin_path,    "ledger"
-      
+
         config.set :ledger_format, "%(quoted(xact.beg_line)),%(quoted(date)),%(quoted(payee)),%(quoted(account)),%(quoted(commodity)),%(quoted(quantity(scrub(display_amount)))),%(quoted(cleared)),%(quoted(virtual)),%(quoted(join(note | xact.note))),%(quoted(cost))\n"
-      
+
         config.set :price_lookup_skip_symbols, ['$']
-      
+
         func = Proc.new do |symbol, min_date, max_date|
           LedgerWeb::YahooPriceLookup.new(symbol, min_date, max_date).lookup
         end
         config.set :price_function, func
-      
-        ledger_web_dir = "#{ENV['HOME']}/.ledger_web"
-      
-        if LedgerWeb::Config.should_load_user_config && File.directory?(ledger_web_dir)
-          if File.directory? "#{ledger_web_dir}/reports"
-            dirs = config.get(:report_directories)
-            dirs.unshift "#{ledger_web_dir}/reports"
-            config.set :report_directories, dirs
-          end
-          
-          if File.exists? "#{ledger_web_dir}/config.rb"
-            config.override_with(LedgerWeb::Config.from_file("#{ledger_web_dir}/config.rb"))
-          end
-        end
+
       end
     end
   end
