@@ -67,7 +67,7 @@ This says that every value in the `Account` column will be surrounded with an `<
 
 #### Customizing
 
-Any ruby files in `~/.ledger_web/lib` will be loaded at startup so you can define your own classes, modules, whatever you want. In addition, you can put [Sequel migrations](http://sequel.rubyforge.org/rdoc/files/doc/migration_rdoc.html) in `~/.ledger_web/migrate` and they'll get applied as necessary at startup.
+You can put [Sequel migrations](http://sequel.rubyforge.org/rdoc/files/doc/migration_rdoc.html) in `~/.ledger_web/migrate` and they'll get applied as necessary at startup.
 
 #### Hooks
 
