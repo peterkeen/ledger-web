@@ -2,7 +2,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "ledger_web/version"
 require 'rake'
  
-task :build do
+task :build => :test do
   system "gem build ledger_web.gemspec"
 end
  
