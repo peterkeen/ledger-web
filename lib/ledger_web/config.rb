@@ -73,10 +73,6 @@ module LedgerWeb
           self.set :user_migrate_dir, "#{user_dir}/migrate"
         end
 
-        if File.directory? "#{user_dir}/reports"
-          self.set :user_reports_dir, "#{user_dir}/reports"
-        end
-
         if File.exists? "#{user_dir}/config.rb"
           self.override_with(LedgerWeb::Config.from_file("#{user_dir}/config.rb"))
         end

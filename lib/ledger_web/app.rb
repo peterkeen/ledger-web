@@ -6,16 +6,17 @@ require 'sinatra/session'
 module LedgerWeb
   class Application < Sinatra::Base
     register Sinatra::Session
+
     set :session_secret, LedgerWeb::Config.instance.get(:session_secret)
     set :session_expire, LedgerWeb::Config.instance.get(:session_expire)
-    set :views, LedgerWeb::Config.instance.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
     set :reload_templates, true
 
     helpers Sinatra::Capture
     helpers LedgerWeb::Helpers
 
     def find_template(views, name, engine, &block)
-      Array(views).each { |v| super(v, name, engine, &block) }
+      _views = LedgerWeb::Config.instance.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
+      Array(_views).each { |v| super(v, name, engine, &block) }
     end
 
     before do
