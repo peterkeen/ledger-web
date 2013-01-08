@@ -65,5 +65,17 @@ describe LedgerWeb::Report do
         [Date.new(2012,1,1), 190, 100, -300, 10]
       ])
     end
+
+    it "should respect other date formats" do
+      LedgerWeb::Report.session = {:from => '2012-01-01', :to => '2012-01-01'}
+      load_fixture('small')
+
+      report = LedgerWeb::Report.from_query("select xtn_month, account, sum(amount)::integer from ledger group by xtn_month, account")
+      report = report.pivot("account", "asc")
+
+      report.rows.should eq([
+        [Date.new(2012,1,1), 190, 100, -300, 10]
+      ])
+    end
   end
 end

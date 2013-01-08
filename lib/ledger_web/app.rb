@@ -39,8 +39,8 @@ module LedgerWeb
         session[:from] = Date.new(today.year - 1, today.month, today.day).strftime('%Y/%m/%d')
         session[:to] = today.strftime('%Y/%m/%d')
       else
-        session[:from] = Date.strptime(params[:from], '%Y/%m/%d').strftime('%Y/%m/%d')
-        session[:to] = Date.strptime(params[:to], '%Y/%m/%d').strftime('%Y/%m/%d')
+        session[:from] = Date.parse(params[:from]).strftime('%Y/%m/%d')
+        session[:to] = Date.parse(params[:to]).strftime('%Y/%m/%d')
       end
 
       redirect back
