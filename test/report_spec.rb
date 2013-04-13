@@ -61,9 +61,9 @@ describe LedgerWeb::Report do
       report = LedgerWeb::Report.from_query("select xtn_month, account, sum(amount)::integer from ledger group by xtn_month, account")
       report = report.pivot("account", "asc")
 
-      report.rows.should eq([
+      report.rows[0].map(&:value).should eq(
         [Date.new(2012,1,1), 190, 100, -300, 10]
-      ])
+      )
     end
 
     it "should respect other date formats" do
@@ -73,9 +73,9 @@ describe LedgerWeb::Report do
       report = LedgerWeb::Report.from_query("select xtn_month, account, sum(amount)::integer from ledger group by xtn_month, account")
       report = report.pivot("account", "asc")
 
-      report.rows.should eq([
+      report.rows[0].map(&:value).should eq(
         [Date.new(2012,1,1), 190, 100, -300, 10]
-      ])
+      )
     end
   end
 end
