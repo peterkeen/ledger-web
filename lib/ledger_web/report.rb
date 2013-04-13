@@ -98,7 +98,7 @@ module LedgerWeb
 
       bucket_column_index = 0
       self.fields.each_with_index do |f, i|
-        if f.title == column
+        if f == column
           bucket_column_index = i
           break
         else
@@ -109,10 +109,10 @@ module LedgerWeb
       buckets = {}
       new_rows = {}
 
-      self.each_row do |row|
-        key = row[0, bucket_column_index].map { |r| r[0] }
-        bucket_name = row[bucket_column_index][0]
-        bucket_value = row[bucket_column_index + 1][0]
+      self.each do |row|
+        key = row[0, bucket_column_index].map { |r| r.value }
+        bucket_name = row[bucket_column_index].value
+        bucket_value = row[bucket_column_index + 1].value
 
         if not buckets.has_key? bucket_name
           buckets[bucket_name] = bucket_name

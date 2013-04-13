@@ -13,12 +13,12 @@ describe LedgerWeb::Report do
 
       report = LedgerWeb::Report.from_query("select count(1) as foo from ledger")
       rows = []
-      report.each_row do |row|
+      report.each do |row|
         rows << row
       end
 
-      rows[0][0][0].should eq(5)
-      rows[0][0][1].should eq(LedgerWeb::Field.new('foo', 'number', 'pull-right'))
+      rows[0][0].value.should eq(5)
+      rows[0][0].align.should eq('left')
     end
 
     it "should respect defaults" do
@@ -27,11 +27,11 @@ describe LedgerWeb::Report do
 
       report = LedgerWeb::Report.from_query("select :foo as foo")
       rows = []
-      report.each_row do |row|
+      report.each do |row|
         rows << row
       end
 
-      rows[0][0][0].should eq("bar")
+      rows[0][0].value.should eq("bar")
     end
 
   end
@@ -45,11 +45,11 @@ describe LedgerWeb::Report do
       report = report.pivot("account", "asc")
 
       report.fields.should eq([
-        string_field('xtn_month'),
-        number_field('Assets:Checking'),
-        number_field('Assets:Savings'),
-        number_field('Equity:Opening Balances'),
-        number_field('Expenses:Lunch')
+        'xtn_month',
+        'Assets:Checking',
+        'Assets:Savings',
+        'Equity:Opening Balances',
+        'Expenses:Lunch'
       ])
       
     end
