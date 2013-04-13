@@ -134,7 +134,7 @@ module LedgerWeb
       new_rows.each do |key, value|
         row = key.each_with_index.map { |k,i| Cell.new(new_report.fields[i], k) }
         bucket_keys.each do |b|
-          row << Cell.new(b, value[b])
+          row << Cell.new(b.to_s, value[b])
         end
 
         new_report.add_row(row)
