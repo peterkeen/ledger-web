@@ -15,13 +15,13 @@
     </script>
   </head>
   <body>
-    <div class="topbar" data-dropdown="dropdown">
-      <div class="fill">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="/">Ledger Web</a>
           <ul class="nav">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle">Reports</a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <% @reports.each do |report| %>
                 <li><a href="/reports/<%= report[0] %>"><%= report[1] %></a></li>
@@ -30,12 +30,6 @@
             </li>
             <li><a href="/help">Help</a></li>
           </ul>
-          <form action="/update-date-range" class="pull-right" method="POST">
-            <input class="input-small" type="date" placeholder="From" name="from" value="<%= session[:from] %>">
-            <input class="input-small" type="date" placeholder="To" name="to" value="<%= session[:to] %>">
-            <button class="btn" type="submit">Update</button>
-            <button class="btn" type="submit" name="reset" value="Reset">Reset</button>
-          </form>
         </div>
       </div>
     </div>
