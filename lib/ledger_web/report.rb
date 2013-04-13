@@ -1,35 +1,16 @@
 module LedgerWeb
-  class Field
+  class Cell
+    attr_reader :title, :value, :style
+    attr_accessor :text, :align
 
-    attr_reader :title, :value_type, :span_class
-
-    def initialize(title, value_type, span_class)
+    def initialize(title, value)
       @title = title
-      @value_type = value_type
-      @span_class = span_class
+      @value = value
+      @style = {}
+      @text = value
+      @align = 'left'
     end
 
-    def ==(other)
-      self.title == other.title && \
-      self.value_type == other.value_type && \
-      self.span_class == other.span_class
-    end
-  end
-
-  class Value
-    def initialize(val)
-      @val = val
-    end
-
-    def to_s
-      @val
-    end
-  end
-
-  class NumericValue < Value
-    def to_s
-      sprintf("%0.2f", @val)
-    end
   end
 
   class Report
@@ -73,18 +54,13 @@ module LedgerWeb
           raise "No data"
         end
         ds.columns.each do |col|
-          value = row[col]
-          if value.is_a? Numeric
-            report.add_field Field.new(col.to_s, 'number', 'pull-right')
-          else
-            report.add_field Field.new(col.to_s, 'string', 'pull-left')
-          end
+          report.add_field col.to_s
         end
 
         ds.each do |row|
           vals = []
           ds.columns.each do |col|
-            vals << row[col]
+            vals << Cell.new(col.to_s, row[col])
           end
           report.add_row(vals)
         end
@@ -111,9 +87,9 @@ module LedgerWeb
       @rows << row
     end
 
-    def each_row
+    def each
       @rows.each do |row|
-        yield row.zip(@fields)
+        yield row
       end
     end
 
@@ -139,8 +115,7 @@ module LedgerWeb
         bucket_value = row[bucket_column_index + 1][0]
 
         if not buckets.has_key? bucket_name
-          field = bucket_value.is_a?(Numeric) ? Field.new(bucket_name, 'number', 'pull-right') : Field.new(bucket_name, 'string', 'pull-left')
-          buckets[bucket_name] = field
+          buckets[bucket_name] = bucket_name
         end
 
         new_rows[key] ||= {}

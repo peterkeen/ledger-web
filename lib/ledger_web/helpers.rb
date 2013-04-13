@@ -11,13 +11,16 @@ module LedgerWeb
     end
   
     def table(report, options = {})
-      links = options[:links] || {}
-      partial(:table, :report => report, :links => links)
+      Table.new(report) do |t|
+        t.decorate :all => LedgerWeb::Decorators::NumberDecorator.new
+        t.attributes[:class] = 'table table-striped table-hover table-bordered table-condensed'
+        yield t if block_given?
+      end.render
     end
   
     def query(options={}, &block)
       q = capture(&block)
-      report = LedgerWeb::Report.from_query(q)
+      report = Report.from_query(q)
       if options[:pivot]
         report = report.pivot(options[:pivot], options[:pivot_sort_order])
       end
@@ -42,29 +45,6 @@ module LedgerWeb
         puts "Setting #{key} to #{value}"
         Report.params[key] = value
       end
-    end
-  
-    def linkify(links, row, value, display_value)
-      links.each do |key, val|
-        if key.is_a? String
-          key = /^#{key}$/
-        end
-  
-        if key.match(value[1].title.to_s)
-          url = String.new(links[key])
-          row.each_with_index do |v,i|
-            url.gsub!(":#{i}", CGI.escape(v[0].to_s))
-          end
-  
-          url.gsub!(':title', CGI.escape(value[1].title.to_s))
-          url.gsub!(':now', CGI.escape(DateTime.now.strftime('%Y-%m-%d')))
-          display_value = "<a href='#{url}'>#{escape_html(display_value)}</a>"
-        else
-          display_value = escape_html(display_value)
-        end
-
-      end
-      display_value
     end
 
     def visualization(report, options={}, &block)
