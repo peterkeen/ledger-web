@@ -19,7 +19,7 @@ module LedgerWeb
 
       @@dw.add_observer do |*args|
         args.each do |event|
-          if event[0] == :stable
+          if event.type == :stable
             puts "Loading database"
             LedgerWeb::Database.run_migrations
             file = LedgerWeb::Database.dump_ledger_to_csv
