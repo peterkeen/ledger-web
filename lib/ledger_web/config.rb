@@ -91,6 +91,7 @@ module LedgerWeb
         config.set :port,               "9090"
         config.set :ledger_file,        ENV['LEDGER_FILE']
         config.set :report_directories, ["#{File.dirname(__FILE__)}/reports"]
+        config.set :additional_view_directories, []
         config.set :session_secret,     'SomethingSecretThisWayPassed'
         config.set :session_expire,     60*60
         config.set :watch_interval,     5

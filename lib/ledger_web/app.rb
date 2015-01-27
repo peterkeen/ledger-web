@@ -15,7 +15,7 @@ module LedgerWeb
     helpers LedgerWeb::Helpers
 
     def find_template(views, name, engine, &block)
-      _views = LedgerWeb::Config.instance.get(:report_directories) + [File.join(File.dirname(__FILE__), 'views')]
+      _views = LedgerWeb::Config.instance.get(:report_directories) + LedgerWeb::Config.instance.get(:additional_view_directories) + [File.join(File.dirname(__FILE__), 'views')]
       Array(_views).each { |v| super(v, name, engine, &block) }
     end
 
