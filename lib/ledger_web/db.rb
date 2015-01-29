@@ -56,20 +56,11 @@ module LedgerWeb
     
         puts "Loading into database...."
 
+        ledger_columns = LedgerWeb::Config.instance.get :ledger_columns
+
         CSV.foreach(file.path) do |row|
           counter += 1
-          row = Hash[*[
-            :xtn_id,
-            :xtn_date,
-            :note,
-            :account,
-            :commodity, 
-            :amount,
-            :cleared,
-            :virtual,
-            :tags,
-            :cost
-          ].zip(row).flatten]
+          row = Hash[*ledger_columns.zip(row).flatten]
 
           xtn_date = Date.strptime(row[:xtn_date], '%Y/%m/%d')
     
