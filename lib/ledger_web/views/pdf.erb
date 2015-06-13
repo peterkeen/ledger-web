@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Ledger Web</title>
+    <style>
+      html {
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: 80%;
+      }
+      .container { width: 100%; margin-right: auto; margin-left: auto;}
+
+      .row { width: 100%; display: table; table-layout: fixed; margin-bottom: 2em; }
+      .row [class*="span"] { clear: both; margin-left: 2%; padding: 1em; }
+
+      th { text-align: left; }
+
+      h1 { padding: 0; margin: 0 }
+
+      .span12 { display: table-cell; width: 100% }
+      .span8 { display: table-cell; width: 66% }
+      .span6 { display: table-cell; width: 50% }
+      .span4 { display: table-cell; width: 33% }
+      table { width: 100%; border-collapse: collapse; font-size: 100%; -fs-table-paginate: paginate; border-spacing: 0;}
+      table.table-striped th { border-bottom: 1px solid silver; background: #EEE }
+      table.table-striped td, table.table th { border-bottom: 1px solid silver; padding-top: 0.25em; padding-bottom: 0.25em }
+      table.table-bordered td, table.table th { border-width: 0 1px 1px 0; border-color: silver; padding-top: 0.25em; padding-bottom: 0.25em }
+      tr,td {page-break-inside: avoid;}
+
+      .row { clear: both }
+      .row:before,.row:after { clear: both }
+      p { margin: 0 }
+      .no-pdf { display: none }
+
+      .page-header { margin-left: 0.9em; border-bottom: 1px solid #eee }
+      .page-header h1 small { font-size: 80%; color: #999; font-style: initial; }
+
+      .pull-right { float: right; padding: 0.25em; }
+      .pull-left { float: left; padding: 0.25em; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

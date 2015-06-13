@@ -2,6 +2,7 @@ require 'rubygems'
 require 'sinatra/base'
 require 'sinatra/contrib'
 require 'sinatra/session'
+require 'docverter'
 
 module LedgerWeb
   class Application < Sinatra::Base
@@ -49,6 +50,21 @@ module LedgerWeb
     get '/reports/:name' do
       begin
         erb params[:name].to_sym
+      rescue Exception => e
+        @error = e
+        erb :error
+      end
+    end
+
+    get '/pdf/:name' do
+      begin
+        res = Docverter::Conversion.run do |c|
+          c.from = 'html'
+          c.to = 'pdf'
+          c.content = erb(params[:name].to_sym, layout: :pdf)
+        end
+        content_type 'application/pdf'
+        return res
       rescue Exception => e
         @error = e
         erb :error
