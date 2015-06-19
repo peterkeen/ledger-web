@@ -104,7 +104,7 @@ module LedgerWeb
         config.set :price_lookup_skip_symbols, ['$']
 
         func = Proc.new do |symbol, min_date, max_date|
-          LedgerWeb::YahooPriceLookup.new(symbol, min_date, max_date).lookup
+          LedgerWeb::YahooPriceLookup.new(symbol, min_date - 1, max_date).lookup
         end
         config.set :price_function, func
       end
