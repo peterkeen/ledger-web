@@ -5,7 +5,7 @@ require 'net/http'
 module LedgerWeb
   class YahooPriceLookup
     def initialize(symbol, min_date, max_date)
-      @symbol = symbol
+      @symbol = symbol.gsub(/"/,'')
       @min_date = min_date
       @max_date = max_date
     end
