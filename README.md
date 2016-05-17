@@ -1,6 +1,8 @@
 Ledger Web
 ----------
 
+**Note:** Development of this codebase is not active, but the project is in a stable state.
+
 Ledger Web is a web-based, postgresql-backed reporting system for the [Ledger](http://www.ledger-cli.org) command-line accounting system.
 It is intended to be completely flexible, allowing you to write whatever reports you want. Note that Ledger Web requires **PostgreSQL version 9.0 or greater**.
 
