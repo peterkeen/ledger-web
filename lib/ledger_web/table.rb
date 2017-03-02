@@ -1,17 +1,22 @@
 module LedgerWeb
   class Table
 
-    attr_reader :attributes
+    attr_reader :attributes, :hidden
 
     def initialize(report)
       @report = report
       @decorators = []
       @attributes = {}
+      @hidden = []
       yield self if block_given?
     end
 
     def decorate decorator
       @decorators << decorator
+    end
+
+    def hide regexp
+      @hidden << regexp
     end
 
     def clear_decorators
@@ -31,6 +36,7 @@ module LedgerWeb
 
       @report.each do |row|
         body_rows << row.each_with_index.map do |cell, cell_index|
+
           @decorators.each do |decorator|
             dec = decorator.dup
             if_clause = dec.delete(:if)
@@ -41,16 +47,28 @@ module LedgerWeb
               next unless if_clause.call(cell, row)
             end
             cell = dec[matcher].decorate(cell, row)
-            header_aligns[cell_index] = cell.align
+            header_aligns[cell_index] = cell.align unless cell.nil?
           end
+
+          if hidden.detect { |r| cell.title =~ r }
+            cell = nil
+          end
+
+          next if cell.nil?
 
           style = cell.style.map { |key, val| "#{key}:#{val}"}.join(";")
           %Q{<td style="#{style}"><span class="pull-#{cell.align}">#{cell.text}</span></td>}
-        end.join("")
+        end.compact.join("")
       end
 
       body = "<tbody>" + body_rows.map { |r| "<tr>#{r}</tr>" }.join("") + "</tbody>"
-      header = "<thead><tr>" + @report.fields.each_with_index.map { |f,i| "<th><span class=\"pull-#{header_aligns[i] || 'left'}\">#{f}</span></th>" }.join("") + "</tr></thead>"
+
+      headers = @report.fields.each_with_index.map do |f,i|
+        next if hidden.detect { |r| f =~ r }
+        "<th><span class=\"pull-#{header_aligns[i] || 'left'}\">#{f}</span></th>"
+      end
+
+      header = "<thead><tr>" + headers.compact.join("") + "</tr></thead>"
 
       attrs = attributes.map { |key,val| "#{key}=\"#{val}\"" }.join(" ")
       "<table #{attrs}>#{header}#{body}</table>"
