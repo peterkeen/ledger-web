@@ -23,7 +23,13 @@ module LedgerWeb
       }
 
       query = params.map { |k,v| "#{k}=#{v}" }.join("&")
-      response = RestClient.get("https://ichart.finance.yahoo.com/table.csv?#{query}")
+      url = "https://ichart.finance.yahoo.com/table.csv?#{query}"
+      begin
+        response = RestClient.get(url)
+      rescue RestClient::Exception => e
+        puts "error retrieving #{url}: #{e.message}"
+        return []
+      end
 
       if response.code != 200
         return []
