@@ -23,10 +23,9 @@ module LedgerWeb
       }
 
       query = params.map { |k,v| "#{k}=#{v}" }.join("&")
-      uri = URI.parse("http://ichart.finance.yahoo.com/table.csv?#{query}")
-      response = Net::HTTP.get_response(uri)
+      response = RestClient.get("https://ichart.finance.yahoo.com/table.csv?#{query}")
 
-      if response.code != '200'
+      if response.code != 200
         return []
       end
 

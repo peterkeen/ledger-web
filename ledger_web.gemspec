@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rspec")
   s.add_dependency("database_cleaner")
   s.add_dependency("docverter")
+  s.add_dependency("rest-client")
 
   s.bindir        = 'bin'
   s.files         = `git ls-files`.split("\n")
