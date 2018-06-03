@@ -51,7 +51,7 @@ module LedgerWeb
         LedgerWeb::Config.instance.run_hooks(:before_load, @@db)
 
         puts "Clearing ledger table...."
-        @@db["DELETE FROM ledger"].delete
+        @@db[:ledger].truncate
         puts "Done clearing ledger table"
     
         puts "Loading into database...."
@@ -115,7 +115,7 @@ module LedgerWeb
 HERE
     
       puts "    Deleting prices"
-      @@db["DELETE FROM prices"].delete
+      @@db[:prices].truncate
     
       rows = @@db.fetch(query)
       proc = LedgerWeb::Config.instance.get :price_function
