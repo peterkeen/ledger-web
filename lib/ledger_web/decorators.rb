@@ -9,7 +9,9 @@ module LedgerWeb::Decorators
     def decorate(cell, row)
       if cell.value.is_a?(Numeric)
         cell.align = 'right'
-        cell.text = sprintf("%0.#{@precision}f", cell.value)
+        raw_number = sprintf("%0.#{@precision}f", cell.value)
+        number_with_commas = raw_number.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+        cell.text = number_with_commas
       end
       cell
     end
