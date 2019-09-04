@@ -49,16 +49,18 @@ module LedgerWeb
       ds = LedgerWeb::Database.handle.fetch(query, params)
       report = self.new
       begin
-        row = ds.first
-        if row.nil?
-          raise "No data"
-        end
-        ds.columns.each do |col|
-          report.add_field col.to_s
-        end
+        fields_added = false
 
         ds.each do |row|
           vals = []
+
+          unless fields_added
+            ds.columns.each do |col|
+              report.add_field col.to_s
+            end
+            fields_added = true
+          end
+
           ds.columns.each do |col|
             vals << Cell.new(col.to_s, row[col])
           end
@@ -66,6 +68,10 @@ module LedgerWeb
         end
       rescue Exception => e
         report.error = e
+      end
+
+      if report.rows.length == 0 && report.error.nil?
+        report.error = "No data"
       end
 
       return report
