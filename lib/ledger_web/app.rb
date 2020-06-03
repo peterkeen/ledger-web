@@ -56,6 +56,29 @@ module LedgerWeb
       end
     end
 
+    get '/query' do
+      if params[:query] && params[:query] =~ /(insert|delete|drop|grant|create|commit|rollback)/i
+        raise 'Invalid query!'
+      end
+
+      if params[:csv]
+        report = Report.from_query(params[:query])
+        content_type 'text/csv'
+
+        return CSV.generate do |csv|
+          if !(params[:headers] == 'false')
+            csv << report.fields
+          end
+
+          report.each do |row|
+            csv << row.map(&:value)
+          end
+        end.to_s
+      end
+
+      erb :query
+    end
+
     get '/pdf/:name' do
       begin
         res = Docverter::Conversion.run do |c|
